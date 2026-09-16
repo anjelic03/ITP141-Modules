@@ -245,3 +245,21 @@ body{display:flex;justify-content:center;align-items:center}
 .fs-row .path { font-family: 'JetBrains Mono', monospace; font-weight: bold; color: var(--rust); }
 .fs-row .desc { color: #444; line-height: 1.4; }
 .fs-row code { font-family: 'JetBrains Mono', monospace; background: #eaeaea; padding: 2px 6px; font-size: 12px; }
+
+/* --- LESSON SLIDE STYLES (Modules 1.6 & 1.7 ...) --- */
+.lesson-grid { display: flex; flex: 1; gap: 60px; padding: 20px 0 40px; overflow: hidden; min-height: 0; }
+.lesson-left { width: 42%; display: flex; flex-direction: column; border-right: 1px solid rgba(22,17,13,.18); padding-right: 60px; overflow-y: auto; }
+.lesson-right { width: 58%; display: flex; flex-direction: column; justify-content: center; }
+.lesson-head { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 24px; border-bottom: 1px solid var(--rule); margin-bottom: 30px; }
+.lesson-head .left h2 { font-family: "Fraunces", serif; font-size: 44px; line-height: 1; font-weight: 500; }
+.lesson-head .left h2 em { font-style: italic; color: var(--rust); }
+.lesson-head .right { text-align: right; }
+.lesson-head .right .range { font-family: "Fraunces", serif; font-size: 44px; font-weight: 400; color: var(--rust); line-height: 1; }
+.lesson-hero { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.lesson-hero .num { font-family: "JetBrains Mono", monospace; font-size: 18px; color: var(--rust); letter-spacing: 2px; margin-bottom: 16px; }
+.lesson-hero .lesson-title { font-family: "Fraunces", serif; font-size: 52px; line-height: 1.1; font-weight: 500; color: var(--ink); margin-bottom: 16px; }
+.lesson-hero .lesson-cat { display: inline-block; padding: 6px 12px; font-family: "JetBrains Mono", monospace; font-size: 14px; letter-spacing: 1.5px; text-transform: uppercase; background: var(--ink); color: var(--paper); margin-bottom: 24px; width: fit-content; }
+.lesson-hero .lesson-desc { font-family: "Fraunces", serif; font-size: 20px; line-height: 1.4; color: #2a221b; margin-bottom: 20px; }
+.lesson-syntax { background: var(--paper-2); padding: 18px 22px; border-left: 4px solid var(--moss); font-family: "JetBrains Mono", monospace; font-size: 16px; color: var(--ink); margin-bottom: 20px; white-space: pre-wrap; }
+.lesson-explain { background: rgba(178,58,28,0.05); border: 1px solid rgba(178,58,28,0.2); padding: 18px 22px; font-family: "Inter Tight", sans-serif; font-size: 15px; line-height: 1.5; color: #3a2f24; border-radius: 4px; }
+.lesson-explain strong { color: var(--rust); font-weight: 700; }

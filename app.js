@@ -272,6 +272,41 @@
             <div class="footbar"><span>§ FILESYSTEM HIERARCHY</span><span class="pagenum">${displayNum}</span></div>
           </section>`;
 
+      } else if (config.type === 'lesson') {
+        const range = `${String(idx + 1).padStart(2, '0')} / ${String(slideConfigs.length).padStart(2, '0')}`;
+        slidesHtml += `
+          <section class="slide">
+            <div class="topbar"><span><span class="dot"></span>MODULE 01 · TOPIC ${currentMod === '1.6' ? '06' : '07'}</span><span>${config.category.toUpperCase()}</span></div>
+            <div class="content">
+              <div class="lesson-head">
+                <div class="left"><div class="tag">${config.category}</div><h2>${config.title} <em>· ${config.subtitle}</em></h2></div>
+                <div class="right"><div class="range">${range}</div><div class="label" style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--mute)">Slide</div></div>
+              </div>
+              <div class="lesson-grid">
+                <div class="lesson-left">
+                  <div class="lesson-hero">
+                    <div class="num">${config.subtitle}</div>
+                    <div class="lesson-title">${config.title}</div>
+                    <div class="lesson-cat">${config.category}</div>
+                    <div class="lesson-desc">${config.desc}</div>
+                    ${config.syntax ? `<div class="lesson-syntax">${config.syntax}</div>` : ''}
+                    ${config.explain ? `<div class="lesson-explain">${config.explain}</div>` : ''}
+                  </div>
+                </div>
+                <div class="lesson-right">
+                  <div class="terminal-mock">
+                    <div class="terminal-header"><div class="dots"><span></span><span></span><span></span></div>bash -- 80x24</div>
+                    <div class="terminal-body">
+                      ${buildTerm(config.term)}
+                      <div class="term-line"><span class="prompt"><span class="user">ajsacay@dorsu</span>:<span class="path">~</span>$</span> <span class="cursor"></span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="footbar"><span>§ LESSON CONTENT</span><span class="pagenum">${displayNum}</span></div>
+          </section>`;
+          
       } else if (config.type === 'commandBasic') {
         const cmd = config.cmd;
         const range = `${String(config.index + 1).padStart(2, '0')} / 35`;
