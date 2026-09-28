@@ -3,7 +3,8 @@
   const modulePaths = {
     '1.1': 'modules/module1.1.js',
     '1.6': 'modules/module1.6.js',
-    '1.7': 'modules/module1.7.js'
+    '1.7': 'modules/module1.7.js',
+    '4.12': 'modules/module4.12.js'
   };
 
   // 2. Check the URL for a selected module (default to 1.6)
@@ -59,6 +60,7 @@
                 <option value="1.1" ${currentMod === '1.1' ? 'selected' : ''}>Topic 01: Foundations</option>
                 <option value="1.6" ${currentMod === '1.6' ? 'selected' : ''}>Topic 06: Dual-OS Part 1</option>
                 <option value="1.7" ${currentMod === '1.7' ? 'selected' : ''}>Topic 07: Dual-OS Part 2</option>
+                <option value="4.12" ${currentMod === '4.12' ? 'selected' : ''}>Topic 12: Security, Hardening & Compliance</option>
               </select>
             </div>
             <div class="content">
