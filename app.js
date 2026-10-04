@@ -11,7 +11,7 @@
 
   // 2. Check the URL for a selected module (default to 1.6)
   const urlParams = new URLSearchParams(window.location.search);
-  const currentMod = urlParams.get('mod') || '1.6';
+  const currentMod = urlParams.get('mod') || '3.9';
 
   // 3. Dynamically load the selected script file
   const script = document.createElement('script');
