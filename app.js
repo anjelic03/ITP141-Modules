@@ -532,6 +532,22 @@
     nextBtn.disabled = (currentSlide === totalSlides - 1);
   }
 
+  function findFactSlide(fact) {
+    const ignoredWords = new Set(['about', 'after', 'before', 'from', 'into', 'that', 'the', 'this', 'with', 'which', 'when', 'where', 'will', 'uses', 'using', 'used', 'your', 'and', 'for', 'are', 'can', 'does', 'its', 'not', 'only', 'then', 'than', 'all']);
+    const terms = [...new Set((fact.toLowerCase().match(/[a-z0-9_./-]{3,}/g) || []).filter(term => !ignoredWords.has(term)))];
+    let bestIndex = 0;
+    let bestScore = 0;
+    slides.forEach((slide, index) => {
+      const content = slide.textContent.toLowerCase();
+      const score = terms.reduce((total, term) => total + (content.includes(term) ? term.length : 0), 0);
+      if (score > bestScore) {
+        bestScore = score;
+        bestIndex = index;
+      }
+    });
+    return bestIndex;
+  }
+
   // Attach event listeners
   prevBtn.addEventListener('click', () => changeSlide(-1));
   nextBtn.addEventListener('click', () => changeSlide(1));
@@ -567,8 +583,16 @@
       if (touchEndX > touchStartX + swipeThreshold) changeSlide(-1);
   }, { passive: true });
 
+  const requestedSlide = Number.parseInt(urlParams.get('slide'), 10);
+  const requestedFact = urlParams.get('fact');
+  const initialSlide = Number.isInteger(requestedSlide) && requestedSlide > 0
+    ? requestedSlide - 1
+    : requestedFact ? findFactSlide(requestedFact) : 0;
+  if (requestedFact && window.history.replaceState) {
+    window.history.replaceState(null, '', `?mod=${encodeURIComponent(currentMod)}&slide=${initialSlide + 1}`);
+  }
   scalePresentation();
-  showSlide(0);
+  showSlide(initialSlide);
   showNavControls();
   window.addEventListener('resize', scalePresentation);
   }
