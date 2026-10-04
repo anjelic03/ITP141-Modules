@@ -114,15 +114,15 @@ body{display:flex;justify-content:center;align-items:center}
 .terminal-header{background:rgba(255,255,255,0.08);padding:16px 24px;display:flex;align-items:center;gap:12px;font-family:"JetBrains Mono",monospace;font-size:14px;color:rgba(244,239,230,0.6);border-bottom:1px solid rgba(255,255,255,0.05)}
 .terminal-header .dots{display:flex;gap:8px;margin-right:16px}.terminal-header .dots span{width:12px;height:12px;border-radius:50%}
 .terminal-header .dots span:nth-child(1){background:#FF5F56}.terminal-header .dots span:nth-child(2){background:#FFBD2E}.terminal-header .dots span:nth-child(3){background:#27C93F}
-.terminal-body{padding:30px 40px;font-family:"JetBrains Mono",monospace;font-size:18px;line-height:1.6;min-height:380px}
-.terminal-body .term-line{display:block;white-space:pre-wrap;word-break:break-all}
+.terminal-body{padding:30px 40px;font-family:"JetBrains Mono",monospace;font-size:18px;line-height:1.6;min-height:380px;max-height:460px;overflow:auto;overscroll-behavior:contain}
+.terminal-body .term-line{display:block;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
 .terminal-body .prompt{color:#E8A07A}.terminal-body .user{color:#27C93F}.terminal-body .path{color:#55BCFF}.terminal-body .cmd{color:#FFFFFF;font-weight:500}.terminal-body .out{color:rgba(244,239,230,0.75)}.terminal-body .err{color:#FF5F56}
 .terminal-body .cursor{display:inline-block;width:10px;height:20px;background:#F4EFE6;vertical-align:text-bottom;animation:blink 1s infinite}
 
 /* Editor UI (for nano/Notepad) */
 .editor-ui { display: block; background: #111; border-top: 2px solid #555; border-bottom: 2px solid #555; margin: 10px -40px; padding: 0; }
 .editor-header { display: block; background: #333; color: #fff; padding: 4px 10px; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; }
-.editor-code { display: block; padding: 20px 40px; color: #27C93F; font-family: 'JetBrains Mono', monospace; font-size: 18px; white-space: pre; margin: 0; line-height: 1.5; }
+.editor-code { display: block; max-height: 280px; overflow: auto; overscroll-behavior: contain; padding: 20px 40px; color: #27C93F; font-family: 'JetBrains Mono', monospace; font-size: 18px; white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; line-height: 1.5; }
 
 @keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
 
@@ -367,9 +367,9 @@ body{display:flex;justify-content:center;align-items:center}
   .terminal-header { padding: 11px 14px; font-size: 10px; }
   .terminal-header .dots { gap: 5px; margin-right: 7px; }
   .terminal-header .dots span { width: 8px; height: 8px; }
-  .terminal-body { min-height: 0; padding: 18px; font-size: 12px; line-height: 1.55; overflow-x: auto; }
+  .terminal-body { min-height: 0; max-height: min(52dvh, 400px); padding: 18px; font-size: 12px; line-height: 1.55; overflow: auto; }
   .editor-ui { margin: 8px -18px; }
-  .editor-code { padding: 14px 18px; font-size: 12px; }
+  .editor-code { max-height: 220px; padding: 14px 18px; font-size: 12px; }
 
   .compare-rows { font-size: 11px; overflow-x: auto; }
   .compare-rows div { min-width: 115px; padding: 9px; }
