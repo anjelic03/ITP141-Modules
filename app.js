@@ -11,7 +11,7 @@
 
   // 2. Check the URL for a selected module (default to 1.6)
   const urlParams = new URLSearchParams(window.location.search);
-  const currentMod = urlParams.get('mod') || '1.6';
+  const currentMod = urlParams.get('mod') || '3.9';
 
   // 3. Dynamically load the selected script file
   const script = document.createElement('script');
@@ -49,6 +49,7 @@
     }
 
     let slidesHtml = '';
+    const moduleTitle = slideConfigs.find(config => config.type === 'cover')?.moduleTitle;
     
     slideConfigs.forEach((config, idx) => {
       const displayNum = String(idx + 1).padStart(2, '0') + ' / ' + String(slideConfigs.length).padStart(2, '0');
@@ -282,7 +283,7 @@
         const range = `${String(idx + 1).padStart(2, '0')} / ${String(slideConfigs.length).padStart(2, '0')}`;
         slidesHtml += `
           <section class="slide">
-            <div class="topbar"><span><span class="dot"></span>MODULE 01 · TOPIC ${currentMod === '1.6' ? '06' : '07'}</span><span>${config.category.toUpperCase()}</span></div>
+            <div class="topbar"><span><span class="dot"></span>${moduleTitle}</span><span>${config.category.toUpperCase()}</span></div>
             <div class="content">
               <div class="lesson-head">
                 <div class="left"><div class="tag">${config.category}</div><h2>${config.title} <em>· ${config.subtitle}</em></h2></div>
