@@ -547,6 +547,9 @@
     else if (currentPosition < previousPosition) showNavControls();
     slideScrollPositions.set(slide, currentPosition);
   }, true);
+  document.addEventListener('pointermove', event => {
+    if (event.pointerType === 'mouse') showNavControls();
+  }, { passive: true });
   document.addEventListener('keydown', showNavControls);
   document.addEventListener('focusin', showNavControls);
 
