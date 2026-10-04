@@ -532,12 +532,35 @@
     nextBtn.disabled = (currentSlide === totalSlides - 1);
   }
 
-  function findFactSlide(fact) {
+  function findFactSlide(fact, topic, prompt) {
     const ignoredWords = new Set(['about', 'after', 'before', 'from', 'into', 'that', 'the', 'this', 'with', 'which', 'when', 'where', 'will', 'uses', 'using', 'used', 'your', 'and', 'for', 'are', 'can', 'does', 'its', 'not', 'only', 'then', 'than', 'all']);
-    const terms = [...new Set((fact.toLowerCase().match(/[a-z0-9_./-]{3,}/g) || []).filter(term => !ignoredWords.has(term)))];
+    const terms = [...new Set(`${fact} ${prompt || ''}`.toLowerCase().match(/[a-z0-9_./-]{3,}/g) || [])].filter(term => !ignoredWords.has(term));
+    const categoryAliases = {
+      'deployment automation': 'automation',
+      'dockerfile': 'docker',
+      'enterprise patching': 'enterprise',
+      'hardening': 'overview',
+      'linux logs': 'log analysis',
+      'linux recovery': 'recovery',
+      'linux patching': 'ubuntu patching',
+      'netplan': 'networking',
+      'security concepts': 'overview',
+      'service recovery': 'recovery',
+      'ssh hardening': 'ssh keys',
+      'ubuntu': 'ubuntu install',
+      'ubuntu recovery': 'itil sop',
+      'windows logs': 'log analysis',
+      'windows recovery': 'recovery'
+    };
+    const category = categoryAliases[topic?.toLowerCase()] || topic?.toLowerCase();
+    const categoryMatches = category
+      ? slideConfigs.map((config, index) => ({ config, index })).filter(({ config }) => config.category?.toLowerCase() === category).map(({ index }) => index)
+      : [];
+    const candidateIndexes = categoryMatches.length ? categoryMatches : slides.map((_, index) => index);
     let bestIndex = 0;
     let bestScore = 0;
-    slides.forEach((slide, index) => {
+    candidateIndexes.forEach((index) => {
+      const slide = slides[index];
       const content = slide.textContent.toLowerCase();
       const score = terms.reduce((total, term) => total + (content.includes(term) ? term.length : 0), 0);
       if (score > bestScore) {
@@ -585,9 +608,11 @@
 
   const requestedSlide = Number.parseInt(urlParams.get('slide'), 10);
   const requestedFact = urlParams.get('fact');
+  const requestedTopic = urlParams.get('topic');
+  const requestedPrompt = urlParams.get('prompt');
   const initialSlide = Number.isInteger(requestedSlide) && requestedSlide > 0
     ? requestedSlide - 1
-    : requestedFact ? findFactSlide(requestedFact) : 0;
+    : requestedFact ? findFactSlide(requestedFact, requestedTopic, requestedPrompt) : 0;
   if (requestedFact && window.history.replaceState) {
     window.history.replaceState(null, '', `?mod=${encodeURIComponent(currentMod)}&slide=${initialSlide + 1}`);
   }
