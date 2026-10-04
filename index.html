@@ -12,11 +12,32 @@
   </head>
 
   <body>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+      <span aria-hidden="true">◐</span><span class="theme-toggle-label">Dark</span>
+    </button>
     <div class="deck-wrapper">
       <!-- ALL slides (Cover, Objectives, Lessons, Closing) will be injected here -->
       <div id="slide-container"></div>
 
     </div>
+
+    <!-- Bump data-changelog-version whenever a new release should be shown again. -->
+    <section id="changelog-modal" class="changelog-modal" role="dialog" aria-modal="true" aria-labelledby="changelog-title" aria-describedby="changelog-details" data-changelog-version="2026-10-04" hidden>
+      <div class="changelog-card">
+        <p class="changelog-kicker">ITP 141 · What’s new</p>
+        <h1 id="changelog-title">A more comfortable study view.</h1>
+        <div id="changelog-details" class="changelog-details">
+          <p>This update improves the presentation experience across devices.</p>
+          <ul>
+            <li>Slides now reflow into a readable mobile layout.</li>
+            <li>Added dark mode.</li>
+            <li>Dark mode follows your device preference.</li>
+          </ul>
+        </div>
+        <label class="changelog-choice"><input id="changelog-dismiss" type="checkbox"> <span>Don’t show this update again</span></label>
+        <button id="changelog-continue" class="changelog-continue" type="button">Okay</button>
+      </div>
+    </section>
 
     <div class="nav-controls">
       <button id="prevBtn">‹ Prev</button>

@@ -1,4 +1,55 @@
 (function () {
+  const themeToggle = document.getElementById('theme-toggle');
+  const themeRoot = document.documentElement;
+  const themeStorageKey = 'itp141-theme';
+  function setTheme(isDark) {
+    themeRoot.classList.toggle('theme-dark', isDark);
+    if (themeToggle) {
+      themeToggle.setAttribute('aria-pressed', String(isDark));
+      themeToggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+      themeToggle.querySelector('.theme-toggle-label').textContent = isDark ? 'Light' : 'Dark';
+    }
+  }
+  let savedTheme = null;
+  try { savedTheme = localStorage.getItem(themeStorageKey); } catch (e) { /* Storage may be unavailable. */ }
+  setTheme(savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches);
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const isDark = !themeRoot.classList.contains('theme-dark');
+      setTheme(isDark);
+      try { localStorage.setItem(themeStorageKey, isDark ? 'dark' : 'light'); } catch (e) { /* Theme still changes for this visit. */ }
+    });
+  }
+
+  // The dismissal is scoped to the release version, so a newer changelog is shown again.
+  const changelogModal = document.getElementById('changelog-modal');
+  const changelogDismiss = document.getElementById('changelog-dismiss');
+  const changelogContinue = document.getElementById('changelog-continue');
+  if (changelogModal && changelogDismiss && changelogContinue) {
+    const changelogVersion = changelogModal.dataset.changelogVersion;
+    const changelogKey = `itp141-changelog-dismissed-${changelogVersion}`;
+    const changelogSessionKey = `itp141-changelog-seen-${changelogVersion}`;
+    let isDismissed = false;
+    let hasSeenThisTab = false;
+    try {
+      isDismissed = localStorage.getItem(changelogKey) === 'true';
+      hasSeenThisTab = sessionStorage.getItem(changelogSessionKey) === 'true';
+    } catch (e) { /* Storage may be unavailable. */ }
+
+    if (!isDismissed && !hasSeenThisTab) {
+      changelogModal.hidden = false;
+      changelogContinue.focus();
+    }
+
+    changelogContinue.addEventListener('click', () => {
+      try { sessionStorage.setItem(changelogSessionKey, 'true'); } catch (e) { /* Continue even if storage is unavailable. */ }
+      if (changelogDismiss.checked) {
+        try { localStorage.setItem(changelogKey, 'true'); } catch (e) { /* Continue even if storage is unavailable. */ }
+      }
+      changelogModal.hidden = true;
+    });
+  }
+
   // 1. Define the available module paths
   const modulePaths = {
     '1.1': 'modules/module1.1.js',
@@ -418,9 +469,39 @@
   let currentSlide = 0;
   const slides = document.querySelectorAll('.slide');
   const totalSlides = slides.length;
+  const finalSlideContent = slides[totalSlides - 1]?.querySelector('.content');
+  if (finalSlideContent) finalSlideContent.insertAdjacentHTML('beforeend', '<button class="back-home" type="button">Back to home</button>');
   const counter = document.getElementById('slideCounter');
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
+  const backHomeBtn = document.querySelector('.back-home');
+  const navControls = document.querySelector('.nav-controls');
+  const floatingControls = [navControls, themeToggle].filter(Boolean);
+  let navHideTimer;
+  const slideScrollPositions = new WeakMap();
+
+  function showNavControls() {
+    floatingControls.forEach(control => control.classList.remove('is-hidden'));
+    clearTimeout(navHideTimer);
+    navHideTimer = setTimeout(() => floatingControls.forEach(control => control.classList.add('is-hidden')), 2800);
+  }
+  function hideNavControls() {
+    clearTimeout(navHideTimer);
+    floatingControls.forEach(control => control.classList.add('is-hidden'));
+  }
+  function showNavigationAtSlideEnd() {
+    if (!navControls) return;
+    clearTimeout(navHideTimer);
+    navControls.classList.remove('is-hidden');
+  }
+  if (navControls) {
+    navControls.addEventListener('mouseenter', () => clearTimeout(navHideTimer));
+    navControls.addEventListener('mouseleave', showNavControls);
+  }
+  if (themeToggle) {
+    themeToggle.addEventListener('mouseenter', () => clearTimeout(navHideTimer));
+    themeToggle.addEventListener('mouseleave', showNavControls);
+  }
 
   slides.forEach((slide, i) => {
     const pageNum = slide.querySelector('.pagenum');
@@ -454,6 +535,20 @@
   // Attach event listeners
   prevBtn.addEventListener('click', () => changeSlide(-1));
   nextBtn.addEventListener('click', () => changeSlide(1));
+  if (backHomeBtn) backHomeBtn.addEventListener('click', () => showSlide(0));
+  document.addEventListener('scroll', event => {
+    const slide = event.target.closest ? event.target.closest('.slide') : null;
+    if (!slide) return;
+    const previousPosition = slideScrollPositions.get(slide) || 0;
+    const currentPosition = slide.scrollTop;
+    const isNearEnd = currentPosition + slide.clientHeight >= slide.scrollHeight - 24;
+    if (isNearEnd) showNavigationAtSlideEnd();
+    else if (currentPosition > previousPosition) hideNavControls();
+    else if (currentPosition < previousPosition) showNavControls();
+    slideScrollPositions.set(slide, currentPosition);
+  }, true);
+  document.addEventListener('keydown', showNavControls);
+  document.addEventListener('focusin', showNavControls);
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); changeSlide(1); }
@@ -471,6 +566,7 @@
 
   scalePresentation();
   showSlide(0);
+  showNavControls();
   window.addEventListener('resize', scalePresentation);
   }
 })();
