@@ -57,12 +57,14 @@
     '1.7': 'modules/module1.7.js',
     '2.8': 'modules/module2.8.js',
     '3.9': 'modules/module3.9.js',
+    '4.10': 'modules/module4.10.js',
+    '4.11': 'modules/module4.11.js',
     '4.12': 'modules/module4.12.js'
   };
 
   // 2. Check the URL for a selected module (default to 1.6)
   const urlParams = new URLSearchParams(window.location.search);
-  const currentMod = urlParams.get('mod') || '3.9';
+  const currentMod = urlParams.get('mod') || '4.10';
 
   // 3. Dynamically load the selected script file
   const script = document.createElement('script');
@@ -116,6 +118,8 @@
                 <option value="1.7" ${currentMod === '1.7' ? 'selected' : ''}>Topic 07: Dual-OS Part 2</option>
                 <option value="2.8" ${currentMod === '2.8' ? 'selected' : ''}>Topic 08: OS Maintenance & Service Management</option>
                 <option value="3.9" ${currentMod === '3.9' ? 'selected' : ''}>Topic 09: Application Mgmt & Server Deployment</option>
+                <option value="4.10" ${currentMod === '4.10' ? 'selected' : ''}>Topic 10: User, Group & Identity Management</option>
+                <option value="4.11" ${currentMod === '4.11' ? 'selected' : ''}>Topic 11: Storage, File Systems & Backup</option>
                 <option value="4.12" ${currentMod === '4.12' ? 'selected' : ''}>Topic 12: Security, Hardening & Compliance</option>
               </select>
             </div>
@@ -527,9 +531,20 @@
   function changeSlide(direction) { showSlide(currentSlide + direction); }
 
   function updateCounter() {
-    counter.textContent = String(currentSlide + 1).padStart(2, '0') + ' / ' + String(totalSlides).padStart(2, '0');
+    const totalSpan = document.querySelector('.slideCounter-total');
+    counter.value = String(currentSlide + 1).padStart(2, '0');
+    if (totalSpan) totalSpan.textContent = '/ ' + String(totalSlides).padStart(2, '0');
     prevBtn.disabled = (currentSlide === 0);
     nextBtn.disabled = (currentSlide === totalSlides - 1);
+  }
+
+  function jumpToCounterValue() {
+    const rawValue = Number.parseInt(counter.value, 10);
+    if (!Number.isInteger(rawValue) || rawValue < 1 || rawValue > totalSlides) {
+      updateCounter();
+      return;
+    }
+    showSlide(rawValue - 1);
   }
 
   function findFactSlide(fact, topic, prompt) {
@@ -574,6 +589,16 @@
   // Attach event listeners
   prevBtn.addEventListener('click', () => changeSlide(-1));
   nextBtn.addEventListener('click', () => changeSlide(1));
+  counter.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      jumpToCounterValue();
+    }
+  });
+  counter.addEventListener('blur', jumpToCounterValue);
+  counter.addEventListener('input', () => {
+    counter.value = counter.value.replace(/\D/g, '').slice(0, 2);
+  });
   if (backHomeBtn) backHomeBtn.addEventListener('click', () => showSlide(0));
   document.addEventListener('scroll', event => {
     const slide = event.target.closest ? event.target.closest('.slide') : null;
@@ -597,14 +622,8 @@
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); changeSlide(-1); }
   });
 
-  let touchStartX = 0, touchEndX = 0;
-  const swipeThreshold = 50;
-  document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
-  document.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      if (touchEndX < touchStartX - swipeThreshold) changeSlide(1);
-      if (touchEndX > touchStartX + swipeThreshold) changeSlide(-1);
-  }, { passive: true });
+  // Swipe navigation is intentionally disabled on mobile so users must use the
+  // on-screen controls or keyboard navigation instead of accidental page swipes.
 
   const requestedSlide = Number.parseInt(urlParams.get('slide'), 10);
   const requestedFact = urlParams.get('fact');
