@@ -54,6 +54,8 @@ body{display:flex;justify-content:center;align-items:center}
 .cover-meta{display:grid;grid-template-columns:1fr 1fr;gap:30px}
 .cover-meta div span{display:block;color:var(--mute);margin-bottom:8px;font-size:14px;font-family:"JetBrains Mono",monospace;letter-spacing:1.5px;text-transform:uppercase}
 .cover-meta div strong{font-weight:600;font-size:22px;color:var(--ink);font-family:"Inter Tight",sans-serif}
+.faculty-stamp{display:flex;align-items:center;gap:20px;margin-top:40px}
+.seal{width:60px;height:60px;border-radius:50%;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:"Fraunces",serif;font-style:italic;font-size:24px;color:var(--ink);background:transparent;flex-shrink:0}
 .cover-right .module-num{font-family:"Fraunces",serif;font-size:260px;line-height:0.85;font-weight:300;color:var(--paper);opacity:0.95;margin-top:20px}
 .cover-right .label{font-family:"JetBrains Mono",monospace;font-size:16px;letter-spacing:3px;text-transform:uppercase;color:var(--rust);margin-bottom:20px;z-index:2;position:relative}
 .cover-right .topic{font-family:"Fraunces",serif;font-size:40px;line-height:1.1;font-weight:400;margin-top:40px;color:var(--paper);z-index:2;position:relative}
@@ -136,9 +138,10 @@ body{display:flex;justify-content:center;align-items:center}
 .closing .sum-card p{font-size:16px;line-height:1.55;color:#3a2f24}
 .closing .footrow{display:flex;justify-content:space-between;align-items:flex-end;padding-top:40px;border-top:1px solid var(--rule);margin-top:40px}
 .closing .footrow .left{font-family:"Fraunces",serif;font-style:italic;font-size:22px;color:#3a2f24;max-width:800px;line-height:1.35}
-.closing .footrow .right{text-align:right}.closing .footrow .right .name{font-family:"Fraunces",serif;font-size:26px;font-weight:500}.closing .footrow .right .role{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--mute);margin-top:8px}
+.closing .footrow .right{display:flex;flex-direction:column;align-items:flex-end;text-align:right;gap:10px}.closing .footrow .right .name{font-family:"Fraunces",serif;font-size:26px;font-weight:500}.closing .footrow .right .role{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--mute);margin-top:8px}
 .back-home{align-self:flex-start;margin-top:28px;padding:12px 18px;border:1px solid var(--ink);border-radius:3px;background:transparent;color:var(--ink);cursor:pointer;font:600 13px "JetBrains Mono",monospace;letter-spacing:1px;text-transform:uppercase;transition:background .2s ease,color .2s ease}
 .back-home:hover,.back-home:focus{background:var(--ink);color:var(--paper)}
+.closing .footrow .back-home{align-self:flex-end;margin-top:8px}
 
 .nav-controls{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:20px;background:rgba(22,17,13,0.9);padding:12px 24px;border-radius:50px;z-index:1000;backdrop-filter:blur(10px);border:1px solid rgba(244,239,230,0.1);box-shadow:0 10px 30px rgba(0,0,0,0.3);transition:opacity .25s ease,transform .25s ease}
 .nav-controls.is-hidden{opacity:0;pointer-events:none;transform:translate(-50%,16px)}

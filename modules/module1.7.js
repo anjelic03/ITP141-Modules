@@ -152,6 +152,7 @@ const slideConfigs = [
     header: 'MODULE 01 · TOPIC 07',
     tag: 'End of Topic 07',
     title: 'Two OSes, <em>One</em> Network.',
+    quote: 'The true sysadmin lab is complete when a Windows PowerShell window can configure a Linux server via SSH.',
     leftCardNum: '§ ubuntu',
     leftCardTitle: 'Netplan & SSH',
     leftCardDesc: 'Ubuntu Server relies on Netplan for modern YAML-based networking. SSH is installed by default, enabling secure remote administration from Windows.',

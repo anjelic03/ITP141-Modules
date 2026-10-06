@@ -53,6 +53,8 @@
   // 1. Define the available module paths
   const modulePaths = {
     '1.1': 'modules/module1.1.js',
+    '1.2': 'modules/module1.2.js',
+    '1.3': 'modules/module1.3.js',
     '1.6': 'modules/module1.6.js',
     '1.7': 'modules/module1.7.js',
     '2.8': 'modules/module2.8.js',
@@ -61,6 +63,7 @@
     '4.11': 'modules/module4.11.js',
     '4.12': 'modules/module4.12.js'
   };
+  const moduleOrder = Object.keys(modulePaths);
 
   // 2. Check the URL for a selected module (default to 1.6)
   const urlParams = new URLSearchParams(window.location.search);
@@ -108,12 +111,16 @@
       const displayNum = String(idx + 1).padStart(2, '0') + ' / ' + String(slideConfigs.length).padStart(2, '0');
 
       if (config.type === 'cover') {
+        const moduleNum = (config.moduleTitle || config.header || '').match(/MODULE\s+(\d+)/i)?.[1]?.padStart(2, '0') || (config.moduleNum || config.topicNum || '00');
+
         slidesHtml += `
           <section class="slide cover">
             <div class="topbar">
               <span><span class="dot"></span>ITP 141 · SYSTEMS ADMINISTRATION & MAINTENANCE</span>
               <select id="module-selector" class="module-selector" aria-label="Select Module">
                 <option value="1.1" ${currentMod === '1.1' ? 'selected' : ''}>Topic 01: Foundations</option>
+                <option value="1.2" ${currentMod === '1.2' ? 'selected' : ''}>Topic 02: Text Processing with grep & sed</option>
+                <option value="1.3" ${currentMod === '1.3' ? 'selected' : ''}>Topic 03: awk</option>
                 <option value="1.6" ${currentMod === '1.6' ? 'selected' : ''}>Topic 06: Dual-OS Part 1</option>
                 <option value="1.7" ${currentMod === '1.7' ? 'selected' : ''}>Topic 07: Dual-OS Part 2</option>
                 <option value="2.8" ${currentMod === '2.8' ? 'selected' : ''}>Topic 08: OS Maintenance & Service Management</option>
@@ -132,7 +139,7 @@
                 </div>
               </div>
               <div class="cover-right">
-                <div class="label">Topic ${config.topicNum} of the Module</div><div class="module-num">${config.topicNum}<sup>${config.topicTag}</sup></div>
+                <div class="label">Topic ${config.topicNum} of the Module</div><div class="module-num">${moduleNum}<sup>${config.topicTag}</sup></div>
                 <div class="topic">${config.graphicText}</div>
                 <div class="objectives-mini">
                   ${config.miniObjectives.map(obj => `<div>${obj}</div>`).join('')}
@@ -439,6 +446,13 @@
           </section>`;
 
       } else if (config.type === 'closing') {
+        const closingTopic = (config.header || '').match(/TOPIC\s+(\d+)/i)?.[1]?.padStart(2, '0') || '01';
+        const closingModule = (config.header || '').match(/MODULE\s+(\d+)/i)?.[1]?.padStart(2, '0') || '01';
+        const closingLabel = `END OF TOPIC ${closingTopic} · MODULE ${closingModule}`;
+        const closingQuote = config.quote || 'The best sysadmins are not the ones who know every command — they are the ones who, before they press Enter, can tell you what it will do.';
+        const nextModule = moduleOrder[moduleOrder.indexOf(currentMod) + 1];
+        const nextTopicButton = nextModule ? `<button class="back-home next-topic" type="button" data-next-mod="${nextModule}">Next Topic</button>` : '';
+
         slidesHtml += `
           <section class="slide closing">
             <div class="topbar"><span><span class="dot"></span>${config.header}</span><span>CLOSING</span></div>
@@ -450,11 +464,15 @@
                 <div class="sum-card"><div class="n">${config.rightCardNum}</div><h4>${config.rightCardTitle}</h4><p>${config.rightCardDesc}</p></div>
               </div>
               <div class="footrow">
-                <div class="left">"The best sysadmins are not the ones who know every command — they are the ones who, before they press Enter, can tell you what it will do."</div>
-                <div class="right"><div class="name">Ar-Jay R. Sacay</div><div class="role">Faculty · ITP 141 · BS Information Technology</div></div>
+                <div class="left">"${closingQuote}"</div>
+                <div class="right">
+                  <div class="name">Ar-Jay R. Sacay</div>
+                  <div class="role">Faculty · ITP 141 · BS Information Technology</div>
+                  ${nextTopicButton}
+                </div>
               </div>
             </div>
-            <div class="footbar"><span>END OF TOPIC 01 · MODULE 01</span><span class="pagenum">${displayNum}</span></div>
+            <div class="footbar"><span>${closingLabel}</span><span class="pagenum">${displayNum}</span></div>
           </section>`;
       }
     });
@@ -468,6 +486,15 @@
         window.location.href = `?mod=${e.target.value}`;
       });
     }
+
+    document.querySelectorAll('.next-topic').forEach((button) => {
+      button.addEventListener('click', () => {
+        const nextMod = button.dataset.nextMod;
+        if (nextMod) {
+          window.location.href = `?mod=${encodeURIComponent(nextMod)}`;
+        }
+      });
+    });
 
   // --- Navigation Logic ---
   let currentSlide = 0;

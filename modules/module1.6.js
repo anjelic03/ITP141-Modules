@@ -144,6 +144,7 @@ const slideConfigs = [
     header: 'MODULE 01 · TOPIC 06',
     tag: 'End of Topic 06 Part 1',
     title: 'Two OSes, <em>One</em> Workspace.',
+    quote: 'The dual-OS environment is the sysadmin\'s laboratory. Master both, and you can deploy anything, anywhere.',
     leftCardNum: '§ wsl 2',
     leftCardTitle: 'Lightweight & Native',
     leftCardDesc: 'Use WSL 2 for fast, resource-efficient Linux command-line tasks directly on Windows. Ideal for text processing, scripting, and development.',

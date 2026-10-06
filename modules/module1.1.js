@@ -211,6 +211,7 @@ slideConfigs.push({
   header: 'MODULE 01 · TOPIC 01',
   tag: 'End of Topic 01',
   title: 'A system administrator <em>reads</em> the machine<br>before changing it.',
+  quote: 'In the beginning, the command line was the only interface. Today, it remains the most powerful. The GUI is for users; the CLI is for administrators.',
   leftCardNum: '§ 01 — 02',
   leftCardTitle: 'Roles & interfaces',
   leftCardDesc: 'The sysadmin\'s work spans the lifecycle; the CLI is the working interface because it is scriptable, remote-friendly, and precise.',

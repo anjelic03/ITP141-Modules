@@ -116,6 +116,7 @@ const slideConfigs = [
     header: 'MODULE 03 · TOPIC 09',
     tag: 'End of Topic 09',
     title: 'From Servers to <em>Containers</em>.',
+    quote: 'Containers did not replace sysadmins; they gave us the tools to deploy complex architectures in seconds instead of days. Automate the deployment, and you master the infrastructure.',
     leftCardNum: '§ traditional',
     leftCardTitle: 'IIS & Nginx',
     leftCardDesc: 'Traditional web servers install the application directly onto the OS. They are easy to understand but can suffer from dependency conflicts and "works on my machine" syndromes.',

@@ -153,6 +153,7 @@ const slideConfigs = [
     header: 'MODULE 04 · TOPIC 10',
     tag: 'End of Topic 10',
     title: 'Identity is the <em>Perimeter</em>.',
+    quote: 'Trust, but verify. Give users the permissions they need to do their jobs, and use auditd to verify they don\'t abuse them.',
     leftCardNum: '§ windows',
     leftCardTitle: 'AD DS & GPOs',
     leftCardDesc: 'Active Directory centralizes Windows identity. OUs organize objects, and GPOs enforce security policies across the domain.',

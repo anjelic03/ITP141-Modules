@@ -116,6 +116,7 @@ const slideConfigs = [
     header: 'MODULE 02 · TOPIC 08',
     tag: 'End of Topic 08',
     title: 'Patch. Monitor. <em>Repeat.</em>',
+    quote: 'System administration is not just about installing; it\'s about maintaining. The patch you skip today is the breach you investigate tomorrow.',
     leftCardNum: '§ maintenance',
     leftCardTitle: 'The ITIL SOP',
     leftCardDesc: 'Following a structured 4-step patching SOP (Assess, Test, Deploy, Verify) ensures system stability while maintaining security in enterprise environments.',

@@ -116,6 +116,7 @@ const slideConfigs = [
     header: 'MODULE 04 · TOPIC 12',
     tag: 'End of Topic 12',
     title: 'Security is a <em>Process</em>, not a Product.',
+    quote: 'The only truly secure system is one that is powered off, cast in a block of concrete, and submerged in a sea. Everything else is a compromise.',
     leftCardNum: '§ frameworks',
     leftCardTitle: 'CIS & NIST',
     leftCardDesc: 'Applying CIS Level 1 baselines reduces the attack surface while aligning with NIST compliance requirements.',

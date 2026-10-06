@@ -149,6 +149,7 @@ const slideConfigs = [
     header: 'MODULE 04 · TOPIC 11',
     tag: 'End of Topic 11',
     title: 'Storage is <em>Elastic</em>. Backup is <em>Insurance</em>.',
+    quote: 'There are two types of sysadmins: those who have lost data, and those who will. Automated backups are the only thing standing between you and disaster.',
     leftCardNum: '§ lvm & samba',
     leftCardTitle: 'Dynamic Storage & Sharing',
     leftCardDesc: 'LVM separates the physical disk from the logical volume, allowing sysadmins to extend storage without downtime. Samba bridges the gap, making Linux storage visible to Windows clients.',
