@@ -69,6 +69,14 @@
   const urlParams = new URLSearchParams(window.location.search);
   const currentMod = urlParams.get('mod') || '4.10';
 
+  const loadingScreen = document.getElementById('loading-screen');
+  const hideLoadingScreen = () => {
+    if (!loadingScreen) return;
+    window.setTimeout(() => {
+      loadingScreen.classList.add('is-hidden');
+    }, 220);
+  };
+
   // 3. Dynamically load the selected script file
   const script = document.createElement('script');
   script.src = modulePaths[currentMod];
@@ -76,10 +84,15 @@
   // 4. Wait for the data to load before building the slides
   script.onload = () => {
     initApp();
+    hideLoadingScreen();
   };
   
   script.onerror = () => {
-    document.getElementById('dynamic-slides').innerHTML = '<div style="color:white; text-align:center; margin-top:20vh; font-family:monospace; font-size:24px;">Error: Module data not found.</div>';
+    const container = document.getElementById('slide-container');
+    if (container) {
+      container.innerHTML = '<div style="color:white; text-align:center; margin-top:20vh; font-family:monospace; font-size:24px;">Error: Module data not found.</div>';
+    }
+    hideLoadingScreen();
   };
   
   document.head.appendChild(script);
