@@ -1,5 +1,33 @@
 (function () {
   const themeToggle = document.getElementById('theme-toggle');
+  const menuButton = document.createElement('button');
+  menuButton.id = 'menu-button';
+  menuButton.type = 'button';
+  menuButton.className = 'menu-button';
+  menuButton.setAttribute('aria-label', 'Open controls menu');
+  menuButton.setAttribute('aria-expanded', 'false');
+  menuButton.innerHTML = '<span aria-hidden="true">☰</span><span>Menu</span>';
+
+  const menuPanel = document.createElement('div');
+  menuPanel.id = 'menu-panel';
+  menuPanel.className = 'menu-panel is-hidden';
+  menuPanel.setAttribute('role', 'menu');
+  menuPanel.setAttribute('aria-label', 'Module controls');
+
+  const findToggle = document.createElement('button');
+  findToggle.id = 'find-toggle';
+  findToggle.type = 'button';
+  findToggle.className = 'find-toggle';
+  findToggle.setAttribute('aria-label', 'Find in module');
+  findToggle.innerHTML = '<span aria-hidden="true">⌕</span><span>Find</span>';
+
+  if (themeToggle) {
+    themeToggle.classList.add('menu-action');
+    menuPanel.appendChild(themeToggle);
+  }
+  menuPanel.appendChild(findToggle);
+  document.body.append(menuButton, menuPanel);
+
   const themeRoot = document.documentElement;
   const themeStorageKey = 'itp141-theme';
   function setTheme(isDark) {
@@ -18,6 +46,8 @@
       const isDark = !themeRoot.classList.contains('theme-dark');
       setTheme(isDark);
       try { localStorage.setItem(themeStorageKey, isDark ? 'dark' : 'light'); } catch (e) { /* Theme still changes for this visit. */ }
+      menuPanel.classList.add('is-hidden');
+      menuButton.setAttribute('aria-expanded', 'false');
     });
   }
 
@@ -492,6 +522,216 @@
 
     document.getElementById('slide-container').innerHTML = slidesHtml;
 
+    const searchPanel = document.createElement('div');
+    searchPanel.className = 'search-panel is-hidden';
+    searchPanel.setAttribute('role', 'search');
+    searchPanel.setAttribute('aria-label', 'Find in module');
+    searchPanel.innerHTML = `
+      <div class="search-panel__box">
+        <div class="search-panel__input-row">
+          <input id="search-input" type="search" placeholder="Find in module..." aria-label="Search module content" />
+          <button id="search-prev" type="button">Prev</button>
+          <button id="search-next" type="button">Next</button>
+          <button id="search-close" class="search-close" type="button">Close</button>
+        </div>
+        <div id="search-status" class="search-status">Type a keyword to search this module.</div>
+      </div>
+    `;
+    document.body.appendChild(searchPanel);
+
+    const searchInput = document.getElementById('search-input');
+    const searchStatus = document.getElementById('search-status');
+    const searchPrev = document.getElementById('search-prev');
+    const searchNext = document.getElementById('search-next');
+    const searchClose = document.getElementById('search-close');
+    let searchMatches = [];
+    let searchIndex = -1;
+
+    function clearSearchHighlight() {
+      slides.forEach((slide) => {
+        slide.classList.remove('search-match');
+        slide.querySelectorAll('mark.search-text-match').forEach((match) => {
+          const parent = match.parentNode;
+          if (!parent) return;
+          parent.replaceChild(document.createTextNode(match.textContent), match);
+        });
+      });
+    }
+
+    function highlightSearchTextOnSlide(slide, query) {
+      if (!slide || !query) return;
+      slide.querySelectorAll('mark.search-text-match').forEach((match) => {
+        const parent = match.parentNode;
+        if (!parent) return;
+        parent.replaceChild(document.createTextNode(match.textContent), match);
+      });
+
+      const walker = document.createTreeWalker(slide, NodeFilter.SHOW_TEXT);
+      const nodes = [];
+      while (walker.nextNode()) {
+        const node = walker.currentNode;
+        if (node.nodeValue && node.nodeValue.toLowerCase().includes(query)) {
+          nodes.push(node);
+        }
+      }
+
+      nodes.forEach((node) => {
+        const text = node.nodeValue || '';
+        const lowercaseText = text.toLowerCase();
+        const fragment = document.createDocumentFragment();
+        let lastIndex = 0;
+        let matchIndex = lowercaseText.indexOf(query, lastIndex);
+
+        while (matchIndex !== -1) {
+          if (matchIndex > lastIndex) {
+            fragment.appendChild(document.createTextNode(text.slice(lastIndex, matchIndex)));
+          }
+
+          const matchNode = document.createElement('mark');
+          matchNode.className = 'search-text-match';
+          matchNode.textContent = text.slice(matchIndex, matchIndex + query.length);
+          fragment.appendChild(matchNode);
+
+          lastIndex = matchIndex + query.length;
+          matchIndex = lowercaseText.indexOf(query, lastIndex);
+        }
+
+        if (lastIndex < text.length) {
+          fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+        }
+
+        if (fragment.childNodes.length > 0) {
+          node.parentNode.replaceChild(fragment, node);
+        }
+      });
+    }
+
+    function setSearchStatus(message, isError = false) {
+      if (!searchStatus) return;
+      searchStatus.textContent = message;
+      searchStatus.classList.toggle('is-error', isError);
+    }
+
+    function applySearchResult(targetIndex) {
+      if (targetIndex < 0 || targetIndex >= slides.length) return;
+      showSlide(targetIndex);
+      clearSearchHighlight();
+      slides.forEach((slide, index) => {
+        if (index === targetIndex) {
+          slide.classList.add('search-match');
+        }
+      });
+      const query = (searchInput?.value || '').trim().toLowerCase();
+      if (query) {
+        highlightSearchTextOnSlide(slides[targetIndex], query);
+      }
+      setSearchStatus(`Match ${searchIndex + 1} of ${searchMatches.length}.`);
+    }
+
+    function moveToSearchResult(offset) {
+      if (!searchInput) return;
+      const query = searchInput.value.trim().toLowerCase();
+      if (!query) {
+        setSearchStatus('Type a keyword to search this module.');
+        return;
+      }
+
+      if (!searchMatches.length) {
+        searchMatches = Array.from({ length: slides.length }, (_, index) => index).filter((index) => {
+          return slides[index].textContent.toLowerCase().includes(query);
+        });
+      }
+
+      if (!searchMatches.length) {
+        clearSearchHighlight();
+        setSearchStatus('No matches found.', true);
+        return;
+      }
+
+      searchIndex = (searchIndex + offset + searchMatches.length) % searchMatches.length;
+      applySearchResult(searchMatches[searchIndex]);
+    }
+
+    function refreshSearchResults() {
+      if (!searchInput) return;
+      const query = searchInput.value.trim().toLowerCase();
+      if (!query) {
+        searchMatches = [];
+        searchIndex = -1;
+        clearSearchHighlight();
+        setSearchStatus('Type a keyword to search this module.');
+        return;
+      }
+
+      clearSearchHighlight();
+      searchMatches = Array.from({ length: slides.length }, (_, index) => index).filter((index) => {
+        return slides[index].textContent.toLowerCase().includes(query);
+      });
+
+      if (!searchMatches.length) {
+        searchIndex = -1;
+        clearSearchHighlight();
+        setSearchStatus('No matches found.', true);
+        return;
+      }
+
+      searchIndex = 0;
+      applySearchResult(searchMatches[searchIndex]);
+    }
+
+    function openSearch() {
+      if (!searchPanel) return;
+      const selectedText = window.getSelection ? window.getSelection().toString().trim() : '';
+      searchPanel.classList.remove('is-hidden');
+      if (selectedText && !searchInput.value.trim()) {
+        searchInput.value = selectedText;
+      }
+      setTimeout(() => {
+        searchInput.focus();
+        searchInput.select();
+        if (searchInput.value.trim()) {
+          refreshSearchResults();
+        }
+      }, 20);
+    }
+
+    function closeSearch() {
+      if (!searchPanel) return;
+      searchPanel.classList.add('is-hidden');
+      clearSearchHighlight();
+      if (searchInput) {
+        searchInput.blur();
+      }
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        refreshSearchResults();
+      });
+      searchInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          moveToSearchResult(1);
+        }
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          closeSearch();
+        }
+      });
+    }
+
+    if (searchPrev) {
+      searchPrev.addEventListener('click', () => moveToSearchResult(-1));
+    }
+
+    if (searchNext) {
+      searchNext.addEventListener('click', () => moveToSearchResult(1));
+    }
+
+    if (searchClose) {
+      searchClose.addEventListener('click', closeSearch);
+    }
+
     // --- ATTACH DROPDOWN LISTENER HERE ---
     const selector = document.getElementById('module-selector');
     if (selector) {
@@ -520,18 +760,30 @@
   const nextBtn = document.getElementById('nextBtn');
   const backHomeBtn = document.querySelector('.back-home');
   const navControls = document.querySelector('.nav-controls');
-  const floatingControls = [navControls, themeToggle].filter(Boolean);
+  const floatingControls = [navControls, menuButton].filter(Boolean);
   let navHideTimer;
   const slideScrollPositions = new WeakMap();
 
   function showNavControls() {
     floatingControls.forEach(control => control.classList.remove('is-hidden'));
     clearTimeout(navHideTimer);
-    navHideTimer = setTimeout(() => floatingControls.forEach(control => control.classList.add('is-hidden')), 2800);
+    navHideTimer = setTimeout(() => {
+      floatingControls.forEach(control => {
+        if (control === menuButton && !menuPanel.classList.contains('is-hidden')) {
+          return;
+        }
+        control.classList.add('is-hidden');
+      });
+    }, 2800);
   }
   function hideNavControls() {
     clearTimeout(navHideTimer);
-    floatingControls.forEach(control => control.classList.add('is-hidden'));
+    floatingControls.forEach(control => {
+      if (control === menuButton && !menuPanel.classList.contains('is-hidden')) {
+        return;
+      }
+      control.classList.add('is-hidden');
+    });
   }
   function showNavigationAtSlideEnd() {
     if (!navControls) return;
@@ -657,8 +909,62 @@
   document.addEventListener('keydown', showNavControls);
   document.addEventListener('focusin', showNavControls);
 
+  if (menuButton) {
+    menuButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const shouldOpen = menuPanel.classList.contains('is-hidden');
+      menuPanel.classList.toggle('is-hidden', !shouldOpen);
+      menuButton.setAttribute('aria-expanded', String(shouldOpen));
+      if (shouldOpen) {
+        showNavControls();
+      }
+    });
+  }
+
+  document.addEventListener('click', (event) => {
+    if (!menuPanel.contains(event.target) && !menuButton.contains(event.target) && !menuPanel.classList.contains('is-hidden')) {
+      menuPanel.classList.add('is-hidden');
+      menuButton.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  findToggle.addEventListener('click', () => {
+    menuPanel.classList.add('is-hidden');
+    menuButton.setAttribute('aria-expanded', 'false');
+    if (searchPanel.classList.contains('is-hidden')) {
+      openSearch();
+    } else {
+      closeSearch();
+    }
+  });
+
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); changeSlide(1); }
+    const isFindShortcut = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f';
+    const isNextFindShortcut = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'g';
+
+    if (isFindShortcut) {
+      e.preventDefault();
+      if (searchPanel && !searchPanel.classList.contains('is-hidden')) {
+        closeSearch();
+      } else {
+        openSearch();
+      }
+      return;
+    }
+
+    if (isNextFindShortcut && searchInput && searchInput.value.trim()) {
+      e.preventDefault();
+      moveToSearchResult(1);
+      return;
+    }
+
+    if (e.key === 'Escape' && searchPanel && !searchPanel.classList.contains('is-hidden')) {
+      e.preventDefault();
+      closeSearch();
+      return;
+    }
+
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); changeSlide(1); }
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); changeSlide(-1); }
   });
 
