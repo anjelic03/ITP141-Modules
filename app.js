@@ -19,12 +19,21 @@
   findToggle.type = 'button';
   findToggle.className = 'find-toggle';
   findToggle.setAttribute('aria-label', 'Find in module');
-  findToggle.innerHTML = '<span aria-hidden="true">⌕</span><span>Find</span>';
+  findToggle.innerHTML = '<span aria-hidden="true">⌕</span>';
+
+  const homeToggle = document.createElement('button');
+  homeToggle.id = 'home-toggle';
+  homeToggle.type = 'button';
+  homeToggle.className = 'home-toggle';
+  homeToggle.setAttribute('aria-label', 'Go to home slide');
+  homeToggle.innerHTML = '<span aria-hidden="true">⌂</span>';
 
   if (themeToggle) {
     themeToggle.classList.add('menu-action');
+    themeToggle.innerHTML = '<span aria-hidden="true">◐</span><span class="theme-toggle-label" hidden>Dark</span>';
     menuPanel.appendChild(themeToggle);
   }
+  menuPanel.appendChild(homeToggle);
   menuPanel.appendChild(findToggle);
   document.body.append(menuButton, menuPanel);
 
@@ -648,7 +657,12 @@
         return;
       }
 
-      searchIndex = (searchIndex + offset + searchMatches.length) % searchMatches.length;
+      if (searchIndex === -1) {
+        searchIndex = offset > 0 ? 0 : searchMatches.length - 1;
+      } else {
+        searchIndex = (searchIndex + offset + searchMatches.length) % searchMatches.length;
+      }
+
       applySearchResult(searchMatches[searchIndex]);
     }
 
@@ -675,8 +689,8 @@
         return;
       }
 
-      searchIndex = 0;
-      applySearchResult(searchMatches[searchIndex]);
+      searchIndex = -1;
+      setSearchStatus(`Found ${searchMatches.length} match${searchMatches.length === 1 ? '' : 'es'}. Use Next or Previous.`);
     }
 
     function openSearch() {
@@ -818,6 +832,15 @@
     slides.forEach((slide, i) => { slide.classList.toggle('active', i === index); });
     currentSlide = index;
     updateCounter();
+  }
+
+  const homeToggle = document.getElementById('home-toggle');
+  if (homeToggle) {
+    homeToggle.addEventListener('click', () => {
+      showSlide(0);
+      menuPanel.classList.add('is-hidden');
+      menuButton.setAttribute('aria-expanded', 'false');
+    });
   }
 
   function changeSlide(direction) { showSlide(currentSlide + direction); }
