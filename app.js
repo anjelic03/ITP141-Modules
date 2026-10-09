@@ -100,7 +100,11 @@
     '3.9': 'modules/module3.9.js',
     '4.10': 'modules/module4.10.js',
     '4.11': 'modules/module4.11.js',
-    '4.12': 'modules/module4.12.js'
+    '4.12': 'modules/module4.12.js',
+    '5.13': 'modules/module5.13.js',
+    '5.14': 'modules/module5.14.js',
+    '6.15': 'modules/module6.15.js',
+    '6.16': 'modules/module6.16.js'
   };
   const moduleOrder = Object.keys(modulePaths);
 
@@ -180,6 +184,10 @@
                 <option value="4.10" ${currentMod === '4.10' ? 'selected' : ''}>Topic 10: User, Group & Identity Management</option>
                 <option value="4.11" ${currentMod === '4.11' ? 'selected' : ''}>Topic 11: Storage, File Systems & Backup</option>
                 <option value="4.12" ${currentMod === '4.12' ? 'selected' : ''}>Topic 12: Security, Hardening & Compliance</option>
+                <option value="5.13" ${currentMod === '5.13' ? 'selected' : ''}>Topic 13: Microsoft Azure Fundamentals</option>
+                <option value="5.14" ${currentMod === '5.14' ? 'selected' : ''}>Topic 14: Infrastructure as Code with Terraform</option>
+                <option value="6.15" ${currentMod === '6.15' ? 'selected' : ''}>Topic 15: Monitoring, Prometheus & Grafana</option>
+                <option value="6.16" ${currentMod === '6.16' ? 'selected' : ''}>Topic 16: Disaster Recovery & IT Documentation</option>
               </select>
             </div>
             <div class="content">
