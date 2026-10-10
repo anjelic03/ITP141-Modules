@@ -49,7 +49,7 @@
   }
   let savedTheme = null;
   try { savedTheme = localStorage.getItem(themeStorageKey); } catch (e) { /* Storage may be unavailable. */ }
-  setTheme(savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches);
+  setTheme(savedTheme ? savedTheme === 'dark' : false);
   if (themeToggle) {
     themeToggle.addEventListener('click', () => {
       const isDark = !themeRoot.classList.contains('theme-dark');
